@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard - Products</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#dadada",
+                      "surface-container": "#eeeeee",
+                      "tertiary": "#000000",
+                      "secondary-fixed-dim": "#c6c6c8",
+                      "secondary-fixed": "#e2e2e4",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "on-primary-container": "#848484",
+                      "on-background": "#1b1b1b",
+                      "on-primary-fixed-variant": "#474747",
+                      "on-error": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-surface": "#1b1b1b",
+                      "on-primary-fixed": "#1b1b1b",
+                      "outline-variant": "#cfc4c5",
+                      "on-secondary": "#ffffff",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#303030",
+                      "primary-fixed": "#e2e2e2",
+                      "on-surface-variant": "#4c4546",
+                      "surface-tint": "#5e5e5e",
+                      "tertiary-fixed-dim": "#c6c6cb",
+                      "tertiary-container": "#1a1c1f",
+                      "primary-container": "#1b1b1b",
+                      "tertiary-fixed": "#e2e2e7",
+                      "on-tertiary-fixed-variant": "#45474b",
+                      "surface-bright": "#f9f9f9",
+                      "on-tertiary-fixed": "#1a1c1f",
+                      "on-tertiary-container": "#828488",
+                      "inverse-primary": "#c6c6c6",
+                      "on-secondary-fixed-variant": "#454749",
+                      "surface": "#f9f9f9",
+                      "error-container": "#ffdad6",
+                      "outline": "#7e7576",
+                      "background": "#f9f9f9",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f3f3f3",
+                      "surface-container-highest": "#e2e2e2",
+                      "on-secondary-fixed": "#1a1c1d",
+                      "secondary-container": "#dfdfe1",
+                      "primary": "#000000",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#e8e8e8",
+                      "on-tertiary": "#ffffff",
+                      "surface-variant": "#e2e2e2",
+                      "secondary": "#5d5e60",
+                      "on-secondary-container": "#616365"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "section-gap": "120px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-edge": "48px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-xl": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex h-screen overflow-hidden">
+<aside class="h-screen w-64 border-r border-zinc-200 dark:border-zinc-800 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex flex-col p-6 space-y-2 flex-shrink-0">
+<div class="mb-12 mt-4 px-3">
+<h1 class="font-bold text-lg text-black dark:text-white font-['Inter'] text-sm tracking-widest uppercase">Admin Panel</h1>
+<p class="font-label-sm text-label-sm text-zinc-500 mt-2 uppercase tracking-widest">Management Console</p>
+</div>
+<nav class="flex-1 flex flex-col space-y-2">
+<a class="flex items-center gap-4 px-3 py-2.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-[4px] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-200 font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="grid_view">grid_view</span>
+                Overview
+            </a>
+<a class="flex items-center gap-4 px-3 py-2.5 bg-black dark:bg-white text-white dark:text-black rounded-[4px] font-medium transition-all duration-200 font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+                Products
+            </a>
+<a class="flex items-center gap-4 px-3 py-2.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-[4px] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-200 font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+                Orders
+            </a>
+<a class="flex items-center gap-4 px-3 py-2.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-[4px] hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-200 font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+</aside>
+<main class="flex-1 overflow-y-auto bg-background px-margin-edge py-12">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-end border-b border-surface-variant pb-8 mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Products</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Manage your inventory and catalog offerings.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-6 py-3 rounded hover:opacity-70 transition-opacity flex items-center gap-2 uppercase">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    Add New Product
+                </button>
+</div>
+<div class="w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr>
+<th class="font-label-sm text-label-sm text-on-surface-variant uppercase pb-4 border-b border-surface-variant font-semibold w-24">Image</th>
+<th class="font-label-sm text-label-sm text-on-surface-variant uppercase pb-4 border-b border-surface-variant font-semibold pl-4">Name</th>
+<th class="font-label-sm text-label-sm text-on-surface-variant uppercase pb-4 border-b border-surface-variant font-semibold w-32">Stock</th>
+<th class="font-label-sm text-label-sm text-on-surface-variant uppercase pb-4 border-b border-surface-variant font-semibold w-40 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant">
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-6 pr-4 align-middle">
+<div class="w-16 h-20 bg-surface-container border border-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="Cashmere Overcoat" class="w-full h-full object-cover object-center" data-alt="minimalist studio shot of a black structured tailored overcoat on an invisible mannequin against a stark white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLVItOqlFUG6WtaSNv4jy0dK5-iGBPSaKwAU570bK5hFbHaqbnkrlMlgu0IvPWpLFIwXAES4EOC2LX1cgMWEP5j3ffLfJmWQcp4CRNrgDfhskTXr1Nl7xYkagbXIrjStfcV9W_fvkN_nK7msU93nB6HgtJIQ2_WLQhen2W5mXgxmV4MKuvduRznIPktY5inGERkzgV_A5hBPdpapbZ1gqyNo2jiKlN_1pouL3bCekXKBRrlGBF5REIbxvoTkqoe84WpNvn3jcLWZGf"/>
+</div>
+</td>
+<td class="py-6 pl-4 align-middle">
+<span class="font-body-md text-body-md text-on-background font-medium block">Structured Cashmere Overcoat</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1 block">Outerwear</span>
+</td>
+<td class="py-6 align-middle font-body-md text-body-md text-on-background">
+                                24
+                            </td>
+<td class="py-6 align-middle text-right">
+<span class="inline-block px-3 py-1 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full uppercase">In Stock</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-6 pr-4 align-middle">
+<div class="w-16 h-20 bg-surface-container border border-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="Merino Knit Sweater" class="w-full h-full object-cover object-center" data-alt="flat lay of a folded dark charcoal gray heavyweight knit sweater on a light gray concrete textured surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAac67qs3VGrnsF3G8smG8dUrFCkMsDUG26TWLe1GbEBH_SXXbG9ihE5476IYCTAtxXU7ezEpikJZSYsC6hjNQQGv0Xe4D_oShke2FupzKlrTIbJgv9RjojJezWVShOoFfXnrFvc3PuT2vD9CM85qBKYG29VadXp-nBzqV7_sBBdQ2VByrumHzrFyj7d7q7JOkQ19KIfyLsZCM68UVsl-w3nCA7Jftlmkp9RHgFKJkzaaO8SB5RoXIQzZXUKWZpfgonn1V3ZavFS9pm"/>
+</div>
+</td>
+<td class="py-6 pl-4 align-middle">
+<span class="font-body-md text-body-md text-on-background font-medium block">Heavyweight Merino Knit</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1 block">Knitwear</span>
+</td>
+<td class="py-6 align-middle font-body-md text-body-md text-on-background">
+                                12
+                            </td>
+<td class="py-6 align-middle text-right">
+<span class="inline-block px-3 py-1 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full uppercase">In Stock</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-6 pr-4 align-middle">
+<div class="w-16 h-20 bg-surface-container border border-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="Pleated Trousers" class="w-full h-full object-cover object-center" data-alt="close up detail shot of the waist and pleat of minimalist black dress trousers showing the subtle twill fabric texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqptjhpCB5mfMAs4WHKPQI29kBOu26ErnifQxklBTIXlk5D1o8imkxcomBkMUHoGHXaooKB0QfWsYSh616bfIblIBBjQ5lUlre8utf9cNGRodzx_AKt1e2Xmllrc6oiNgvBFab3n9RoVOmGoM7TYzp8UMeDT81oo_Z9TNdOO7vfZqNfwCKqGx1GZ0Uvw7_uMyW2hvEYcfqu_JRWddMQ78AZzCWvx6rZNfcbx5dZ3209pgHbI3RPZt-obLFWLsUy05oRUC6tMkN4LF_"/>
+</div>
+</td>
+<td class="py-6 pl-4 align-middle">
+<span class="font-body-md text-body-md text-on-background font-medium block">Wide-Leg Pleated Trouser</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1 block">Bottoms</span>
+</td>
+<td class="py-6 align-middle font-body-md text-body-md text-on-background">
+                                0
+                            </td>
+<td class="py-6 align-middle text-right">
+<span class="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded-full uppercase">Out of Stock</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-6 pr-4 align-middle">
+<div class="w-16 h-20 bg-surface-container border border-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="Leather Derby Shoes" class="w-full h-full object-cover object-center" data-alt="top down view of a pair of minimalist matte black leather derby shoes with chunky soles on a pale gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT2c8TXKgs7qDKedybgiHdEm27yeOOr_OnLncg9VW5wyKOAOliDgFs-DHIFDEaC0H_E_HPEOlqUnKZjv-krtpOkLwrnGoa48FczDxsgL_peGf0Q4SvZ17I2m9u8Bs6VRfeUqi9ZyTfz-o0HSPdNb_5bq5WXV6UvotUbcwU1OQpGzm6omCz7q_1N5C15KPaUWljhI2yEV_LJV4XHrdFvht2niQtBRgVwY4nR0ufaOocWQN2R3RmQcu5WGWwHR36PSdDhzqKG7AxaL1m"/>
+</div>
+</td>
+<td class="py-6 pl-4 align-middle">
+<span class="font-body-md text-body-md text-on-background font-medium block">Matte Leather Derby</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1 block">Footwear</span>
+</td>
+<td class="py-6 align-middle font-body-md text-body-md text-on-background">
+                                8
+                            </td>
+<td class="py-6 align-middle text-right">
+<span class="inline-block px-3 py-1 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full uppercase">In Stock</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-8 flex justify-between items-center border-t border-surface-variant pt-6">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Showing 1-4 of 42 Items</span>
+<div class="flex gap-4">
+<button class="font-label-sm text-label-sm text-on-background uppercase tracking-widest hover:opacity-70 transition-opacity">Previous</button>
+<button class="font-label-sm text-label-sm text-on-background uppercase tracking-widest hover:opacity-70 transition-opacity">Next</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

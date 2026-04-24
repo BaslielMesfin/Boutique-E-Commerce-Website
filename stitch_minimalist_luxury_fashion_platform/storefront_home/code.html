@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ESSENTIAL - Luxury Fashion</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dadada",
+                        "surface-container": "#eeeeee",
+                        "tertiary": "#000000",
+                        "secondary-fixed-dim": "#c6c6c8",
+                        "secondary-fixed": "#e2e2e4",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-primary-container": "#848484",
+                        "on-background": "#1b1b1b",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1b1b",
+                        "on-primary-fixed": "#1b1b1b",
+                        "outline-variant": "#cfc4c5",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#303030",
+                        "primary-fixed": "#e2e2e2",
+                        "on-surface-variant": "#4c4546",
+                        "surface-tint": "#5e5e5e",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "tertiary-container": "#1a1c1f",
+                        "primary-container": "#1b1b1b",
+                        "tertiary-fixed": "#e2e2e7",
+                        "on-tertiary-fixed-variant": "#45474b",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-fixed": "#1a1c1f",
+                        "on-tertiary-container": "#828488",
+                        "inverse-primary": "#c6c6c6",
+                        "on-secondary-fixed-variant": "#454749",
+                        "surface": "#f9f9f9",
+                        "error-container": "#ffdad6",
+                        "outline": "#7e7576",
+                        "background": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-fixed": "#1a1c1d",
+                        "secondary-container": "#dfdfe1",
+                        "primary": "#000000",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "secondary": "#5d5e60",
+                        "on-secondary-container": "#616365"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "section-gap": "120px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "margin-edge": "48px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Ensure images don't overflow their containers in grid layouts */
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary selection:text-on-primary">
+<nav class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] text-[13px] tracking-[0.05em] uppercase docked full-width top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 flat no-shadow flex justify-between items-center h-20 px-8 max-w-[1440px] mx-auto sticky">
+<div class="flex items-center gap-8">
+<a class="text-xl font-bold tracking-tighter text-black dark:text-white active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity" href="#">ESSENTIAL</a>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-black dark:text-white border-b border-black dark:border-white pb-1 active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity" href="#">Collections</a>
+<a class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity" href="#">New Arrivals</a>
+<a class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity" href="#">Archive</a>
+<a class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity" href="#">Journal</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="search" class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button aria-label="person" class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button aria-label="shopping_bag" class="text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white transition-colors active:scale-[0.98] transition-transform duration-200 hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</div>
+</nav>
+<main>
+<section class="w-full h-[870px] relative overflow-hidden flex items-end justify-center pb-24 md:pb-32 px-8">
+<div class="absolute inset-0 z-0 bg-surface-container">
+<img alt="High-end editorial fashion image of a model wearing a structured beige trench coat in a minimalist concrete setting with dramatic natural lighting" class="w-full h-full object-cover object-center opacity-90" data-alt="High-end editorial fashion image of a model wearing a structured beige trench coat in a minimalist concrete setting with dramatic natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN2kq_JugnOWyAHz8IZzLue5Dl8dDyfWzWNiNsCQY9T3yZ9yi0Mv8OZlpbbf4EtLbCM7o5TMt4S86TDdatYeT-mU72L88mqgZyqG_ZF8XMO9xL70kFm0v2jZ0DBqtqomwW43KKviPXkCxPcMtArgbz3a0AwKJvks55NX7OpJTvghEMGbk2OUIM-U0VmNHoXWmVff-YQ5cE_Hk0GJ_WxJ8k8a5FOJkWvUBmKCAfAqanH5qWsQZTcuEtb_BLBjge0MkcKP7cBU5gkTQx"/>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center gap-8 max-w-2xl">
+<h1 class="font-display-xl text-display-xl text-primary drop-shadow-sm mix-blend-multiply">The New Uniform</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">Redefining modern silhouettes with uncompromising materials and structural precision.</p>
+<button class="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-[0.1em] px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-300 mt-4">
+                    Shop Now
+                </button>
+</div>
+</section>
+<section class="max-w-container-max mx-auto px-8 md:px-margin-edge py-section-gap">
+<div class="flex items-end justify-between mb-16 border-b border-outline-variant pb-8">
+<h2 class="font-headline-lg text-headline-lg text-primary uppercase">Curated Essentials</h2>
+<a class="font-label-sm text-label-sm text-primary uppercase border-b border-primary pb-1 hover:text-surface-tint hover:border-surface-tint transition-colors" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-x-gutter gap-y-16">
+<div class="md:col-span-8 group cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container overflow-hidden mb-6 relative">
+<img alt="Editorial shot of a premium tailored black overcoat draped over a minimalist wooden chair against a stark white background" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Editorial shot of a premium tailored black overcoat draped over a minimalist wooden chair against a stark white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYQROsaOz5lIZ5Hx8tZAUnOdCASKmdo6-QuBtby4IBiXrn3SC_tfNbjtDvDYf9kFlhKy00vVtwhjttSEFF7WpRbX1LQOALP7qKhA1ExFc7p32EccVgXn7qU3Nre9NC0T9sFeeChsPOT2grBLoPXsmHX7KEisGXlF0UngjcZAdw55B0r_FCbRcCuz-C7lHZOBrfL--iib9Qtv7E6K12wP1g6LqXcgCJpKv83DyuhCnD8aWSBtLZ1S28fATHeIfjnVY0i5DxOrIzbA5i"/>
+<div class="absolute inset-0 border border-outline-variant opacity-20"></div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-body-md text-body-md text-primary uppercase tracking-wide">Essential Trench Coat</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ETB 14,500</p>
+</div>
+</div>
+<div class="md:col-span-4 flex flex-col gap-16">
+<div class="group cursor-pointer">
+<div class="w-full aspect-[3/4] bg-surface-container overflow-hidden mb-6 relative">
+<img alt="Close-up detail shot of crisp white cotton poplin shirt collar and hidden placket, soft diffused studio lighting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Close-up detail shot of crisp white cotton poplin shirt collar and hidden placket, soft diffused studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCttIhkRlgiTmG4wXtEv-Jiyh7FVvpqlmvCcYOqzcz_tLkQoQy7cAdkh0Y3SUoOupR6zoWYnchTk3HUJUt5ZRHZQCol_t3L39vy7Lis6wiNsk5h0AcRvFRXPN-zx1zor8CtevtXIaoJu437pWjbgdmG9Wf-dq5KhFPsfe0NiZ6SKOKofmvJs3Wpz9SU5x_0weum5OQSDXXgCmWghEJAb-y153c5DgfPPViWqdPkflpiJJUWGiWaeC1qXJuLZkA7tDaq3iwMKmXlPu2"/>
+<div class="absolute inset-0 border border-outline-variant opacity-20"></div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-body-md text-body-md text-primary uppercase tracking-wide">Poplin Standard Shirt</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ETB 6,200</p>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="w-full aspect-[3/4] bg-surface-container overflow-hidden mb-6 relative">
+<img alt="Minimalist laydown of sleek black leather derby shoes on a cool grey concrete textured surface" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Minimalist laydown of sleek black leather derby shoes on a cool grey concrete textured surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3PixV5NI_Mu2SUd9d4QNqbRyVkvWmaLV9aG-qfB1ph90gzENeb-CBU6DwUQu6MN6-LNGLpmIAOgefaQz_CbjQPNk6dxcNsWRxPrj4kLuZ7IDL2vPvivPdPmjF8NNx9IUJoObXfcj4oFCofOuWnt795V4dlcWiX_gitJ9GzTnYKsWYGc9FDolJxoruJEKAiXfpD1oCSfOvZfzlT8Gw9h2WDFp9F1bH42t_0FAgn76I5EjE_n4su3q0t8Ug9AgYqpqgDjTtkqhGSU3E"/>
+<div class="absolute inset-0 border border-outline-variant opacity-20"></div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-body-md text-body-md text-primary uppercase tracking-wide">Leather Derby</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ETB 18,900</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] text-[12px] tracking-wider uppercase w-full pt-20 pb-10 border-t border-zinc-100 dark:border-zinc-900 flat max-w-[1440px] mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8 transition-all">
+<div class="flex items-center gap-8 flex-col md:flex-row">
+<span class="text-sm font-bold active:scale-[0.98] transition-transform duration-200">ESSENTIAL</span>
+<div class="flex gap-6">
+<a class="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">About</a>
+<a class="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Shipping</a>
+<a class="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Returns</a>
+<a class="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Contact</a>
+</div>
+</div>
+<div class="text-zinc-400">
+            © 2024 ESSENTIAL. ALL RIGHTS RESERVED.
+        </div>
+</footer>
+</body></html>
