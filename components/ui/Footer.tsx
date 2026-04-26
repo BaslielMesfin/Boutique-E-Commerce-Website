@@ -1,19 +1,63 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-black text-black dark:text-white font-['Inter'] text-[12px] tracking-wider uppercase w-full pt-20 pb-10 border-t border-zinc-100 dark:border-zinc-900 flat max-w-[1440px] mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8 transition-all mt-auto">
-      <div className="flex items-center gap-8 flex-col md:flex-row">
-        <span className="text-sm font-bold active:scale-[0.98] transition-transform duration-200">ESSENTIAL</span>
-        <div className="flex gap-6">
-          <Link className="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">About</Link>
-          <Link className="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Shipping</Link>
-          <Link className="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Returns</Link>
-          <Link className="text-zinc-400 hover:text-black dark:hover:text-white transition-colors hover:underline underline-offset-4" href="#">Contact</Link>
+    <footer className="border-t border-edge mt-auto">
+      <div className="max-w-[1200px] mx-auto px-6 py-16">
+
+        {/* Top row */}
+        <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
+          {/* Brand */}
+          <div className="max-w-xs">
+            <span className="text-[14px] font-semibold tracking-[0.12em] uppercase text-ink block mb-4">
+              Habesha
+            </span>
+            <p className="text-[13px] text-ink-secondary leading-relaxed">
+              Curated women&apos;s fashion and shoes. Ethiopian elegance, modern sensibility.
+            </p>
+          </div>
+
+          {/* Links */}
+          <div className="flex gap-16">
+            <div>
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-tertiary mb-5">
+                Shop
+              </h4>
+              <ul className="space-y-3">
+                <li><Link href="/products" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">All</Link></li>
+                <li><Link href="/products?category=dresses" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">Dresses</Link></li>
+                <li><Link href="/products?category=shoes" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">Shoes</Link></li>
+                <li><Link href="/products?category=new" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">New Arrivals</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-tertiary mb-5">
+                Help
+              </h4>
+              <ul className="space-y-3">
+                <li><Link href="#" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">Shipping</Link></li>
+                <li><Link href="#" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">Returns</Link></li>
+                <li><Link href="#" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="text-zinc-400">
-        © {new Date().getFullYear()} ESSENTIAL. ALL RIGHTS RESERVED.
+
+        {/* Bottom row */}
+        <div className="pt-8 border-t border-edge flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] text-ink-tertiary">
+            © {new Date().getFullYear()} Habesha Store. All rights reserved.
+          </p>
+          <div className="flex gap-6">
+            <Link href="#" className="text-[11px] text-ink-tertiary hover:text-ink-secondary transition-colors">
+              Privacy
+            </Link>
+            <Link href="#" className="text-[11px] text-ink-tertiary hover:text-ink-secondary transition-colors">
+              Terms
+            </Link>
+          </div>
+        </div>
+
       </div>
     </footer>
   );

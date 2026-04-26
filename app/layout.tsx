@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ESSENTIAL - Luxury Fashion",
-  description: "Boutique E-Commerce Platform",
+  title: "Habesha Store — Women's Fashion & Shoes",
+  description: "Curated women's fashion, heels, and shoes. Ethiopian elegance meets modern style.",
 };
 
 export default function RootLayout({
@@ -18,14 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className="min-h-full flex flex-col bg-surface-container-lowest text-on-surface selection:bg-primary selection:text-on-primary">
+      <body className="min-h-screen flex flex-col antialiased bg-surface text-ink selection:bg-ink selection:text-surface-elevated">
         {children}
       </body>
     </html>

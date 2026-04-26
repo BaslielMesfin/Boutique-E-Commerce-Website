@@ -1,80 +1,188 @@
-import Link from 'next/link';
+import Link from "next/link";
+import prisma from "@/lib/prisma";
+import ProductCard from "@/components/ui/ProductCard";
 
-export default function Home() {
+/* ── Demo fallback products ────────────────────────────────────── */
+const demoProducts = [
+  {
+    id: "classic-cotton-tee",
+    name: "Aselefech Cotton Blouse",
+    basePrice: 1200,
+    category: "Tops",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuD9Vbj7DWnXquyQNszZB7dwrr-5ikOvkHDcQ4ceHjs82I4W0pi3vzBgnU1B_u_d_NTILYXD9ksjtpyHTsLSsw6s1E0PD1kFIoMk5i8oY_E0VG3cCZEgH0FqX_gI8cZ38E8PCQEwoieaS8qeHFWTxzb3ewvl67n2dRrIwA9chTxr8Ue40sN_8gXQyXhq9JfadQ8aoz1FOl7IkHyrmcrN8d_VO_w5bzAeGFqzhNd5NQCwBpSoC9VWXW7xOY79nCxNXfDc-mwD42Av44mI"],
+  },
+  {
+    id: "tailored-trousers",
+    name: "Tailored Wide-Leg Trousers",
+    basePrice: 3500,
+    category: "Bottoms",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuDWZx8h6mSUA8ZaNkZj-n6I2exFkHfN2Fcb5LkHcQttMghIgk_72e4BKCZ0jp7kpGzmpTykLgiWI-BmDVUiozsLVGG6tyFLkWoC8_xV41oHJ7L9pyYjCt5vI21HArVSV4Yu4dCKX7Dg9C75SYunr9VqFL4jTZNWNwdU4GalqF1p9kZXzPNzFhHlP7GSYv_CvjYIRw7_WdpMjoRmg86Y91WpXCrkH3CxX8h2_JSiZGKs2RVNGXIxXiMSNRBkV5ICPtM8UaQqqnIx41bn"],
+  },
+  {
+    id: "structured-trench",
+    name: "Structured Trench Coat",
+    basePrice: 8900,
+    category: "Outerwear",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuCN7iqEsegLe-Fy0dFJjW2GFaPcyXrq4kBCfjwI4PiVFiE5GjfdDUfbrV-fKSgYIAozQboBsQiOVUz9T_iwqBFUOMTpho4D1KLnW696lG6ThtMxf451e6GEuXD5wp4-uIfjK9aZpFaiRtW8VBYvinMuIXcrZcdZKccQZ2iQ1E0SOTEiu-O7oDp9oxsWS7Mw5mVEJSPT0_1iXHiW3hl5e9fscvDJ_chlMa2zx-3-FGZKayUVpUxSfO2fQ1CZ11XqjhE99Bh7qoNvnN-E"],
+  },
+  {
+    id: "geometric-pendant",
+    name: "Gold Pendant Necklace",
+    basePrice: 2400,
+    category: "Accessories",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuCynCF_GrO9NXjOzVd4M4iqJzVtS8uNk537td1h_qKGWpWQmoDoJTS8QauYD8vFldXsdgZxs1QsyjM6jOdcoLXx4cRHO28cUubm2TL6HnTxSQIYViqad7otgEBssSm06Qp3PHl8T3EaO3ODoBMZpBmdIlfQxoCfM9uTayWRPqwChTLfQUskaEA5i6m9Uv9NFx6_olNaAY_1c4E41g7rZljsq2FXTLRRcxpskUyUgULqqD8q7qC8srFBd_whPjh3CB7ylrzuZCNLQ0tE"],
+  },
+  {
+    id: "ribbed-knit-sweater",
+    name: "Cashmere Knit Sweater",
+    basePrice: 4200,
+    category: "Tops",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuCqSSrLizd5ecfSLn0djHYcrQHaMl3DNEdo7uPCL3XNOI8_3FkAgof1rfF-kKixl8zrnh4fJWKE95N4LH_zHY5a8BydaPDmh59TehBs3pGiVfVmKCYyvDJkLrywVdUVUARcCNdrkEWgjI-kJ7bm1duOnXqfmZM8tRON7xB4GeUO5SOZ16x7b8SlbccIsOayabUkja_CvWZwevZidmfgA52VJnBLq_MoiNBIkAxrSeE3Mvlp06lWaLcoeGsChCQ_sv0aSYAb7T3KimZy"],
+  },
+  {
+    id: "essential-tote",
+    name: "Structured Leather Tote",
+    basePrice: 6500,
+    category: "Accessories",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuDxlh3tu0V13fmueooRgM75MgndHJyBjiO3Eqt8b8AVSIH-ILJH1qjcN_6mH-Ut-eqaEUx9Rpj3dwXZcJp3vlxMCvpnp9_KmNdCM-ACvWgxiWTev08OdjrYbfmGZZu5fsHXiHmkA9mEguVeAQA2W-29-30yLaCAz6JdRiyNb03D4c8711IaSvXCqfxi-XVSxRaPL4DGpkFInrk5CjY1hjrg4u_-JFsoaIgvdjBPG9BIQ0Nr5q1McpnxNqcZQKLAQpjUnqdK1BWXuWAZ"],
+  },
+  {
+    id: "minimalist-sneaker",
+    name: "Minimal Leather Sneakers",
+    basePrice: 5400,
+    category: "Shoes",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuBKGmy0jdacITCG8ojZA4XRxLA8ThYLZ2WlMg-AMV23pDO0MPO68h_W9tQ6KbjA1AjeVe1LQobDwc_vJbwAikx_o-90zP6jbeQyzOMyW5oTpoFSIEVpNZqZNZaGbqDBlh2y2OEs6bMsVtPgoWA3tAQkO4kXZsWcAZ9VuDPWbnQPcxIQm3G7F-GIBohix2hNU0xFF9b2tS8fkqG4pGhLVVhU5-0IZazBCN1pBfNvXXkPSiZVn17K0W5ZFfDQTSlfkyS5OYB77fFVmZ8w"],
+  },
+  {
+    id: "leather-derby",
+    name: "Leather Pointed Heels",
+    basePrice: 7800,
+    category: "Shoes",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuA3PixV5NI_Mu2SUd9d4QNqbRyVkvWmaLV9aG-qfB1ph90gzENeb-CBU6DwUQu6MN6-LNGLpmIAOgefaQz_CbjQPNk6dxcNsWRxPrj4kLuZ7IDL2vPvivPdPmjF8NNx9IUJoObXfcj4oFCofOuWnt795V4dlcWiX_gitJ9GzTnYKsWYGc9FDolJxoruJEKAiXfpD1oCSfOvZfzlT8Gw9h2WDFp9F1bH42t_0FAgn76I5EjE_n4su3q0t8Ug9AgYqpqgDjTtkqhGSU3E"],
+  },
+];
+
+/* ── Page ──────────────────────────────────────────────────────── */
+
+export default async function HomePage() {
+  let products: typeof demoProducts = [];
+  try {
+    const db = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    });
+    if (db.length > 0) products = db;
+  } catch { /* ignore */ }
+
+  if (products.length === 0) products = demoProducts;
+
+  const featured = products[0];
+  const gridProducts = products.slice(1);
+
   return (
-    <main>
-      <section className="w-full h-[870px] relative overflow-hidden flex items-end justify-center pb-24 md:pb-32 px-8">
-        <div className="absolute inset-0 z-0 bg-surface-container">
-          <img 
-            alt="High-end editorial fashion image of a model wearing a structured beige trench coat in a minimalist concrete setting with dramatic natural lighting" 
-            className="w-full h-full object-cover object-center opacity-90" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN2kq_JugnOWyAHz8IZzLue5Dl8dDyfWzWNiNsCQY9T3yZ9yi0Mv8OZlpbbf4EtLbCM7o5TMt4S86TDdatYeT-mU72L88mqgZyqG_ZF8XMO9xL70kFm0v2jZ0DBqtqomwW43KKviPXkCxPcMtArgbz3a0AwKJvks55NX7OpJTvghEMGbk2OUIM-U0VmNHoXWmVff-YQ5cE_Hk0GJ_WxJ8k8a5FOJkWvUBmKCAfAqanH5qWsQZTcuEtb_BLBjge0MkcKP7cBU5gkTQx"
-          />
-        </div>
-        <div className="relative z-10 flex flex-col items-center text-center gap-8 max-w-2xl">
-          <h1 className="font-display-xl text-display-xl text-primary drop-shadow-sm mix-blend-multiply">The New Uniform</h1>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md">Redefining modern silhouettes with uncompromising materials and structural precision.</p>
-          <Link href="/products" className="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-[0.1em] px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-300 mt-4 inline-block">
-            Shop Now
-          </Link>
-        </div>
-      </section>
-      
-      <section className="max-w-[1440px] mx-auto px-8 md:px-[48px] py-[120px]">
-        <div className="flex items-end justify-between mb-16 border-b border-outline-variant pb-8">
-          <h2 className="font-headline-lg text-headline-lg text-primary uppercase">Curated Essentials</h2>
-          <Link className="font-label-sm text-label-sm text-primary uppercase border-b border-primary pb-1 hover:text-surface-tint hover:border-surface-tint transition-colors" href="/products">View All</Link>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-[24px] gap-y-16">
-          <Link href="/products/essential-trench" className="md:col-span-8 group cursor-pointer block">
-            <div className="w-full aspect-[4/5] bg-surface-container overflow-hidden mb-6 relative">
-              <img 
-                alt="Editorial shot of a premium tailored black overcoat draped over a minimalist wooden chair against a stark white background" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYQROsaOz5lIZ5Hx8tZAUnOdCASKmdo6-QuBtby4IBiXrn3SC_tfNbjtDvDYf9kFlhKy00vVtwhjttSEFF7WpRbX1LQOALP7qKhA1ExFc7p32EccVgXn7qU3Nre9NC0T9sFeeChsPOT2grBLoPXsmHX7KEisGXlF0UngjcZAdw55B0r_FCbRcCuz-C7lHZOBrfL--iib9Qtv7E6K12wP1g6LqXcgCJpKv83DyuhCnD8aWSBtLZ1S28fATHeIfjnVY0i5DxOrIzbA5i"
-              />
-              <div className="absolute inset-0 border border-outline-variant opacity-20"></div>
+    <>
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <section className="max-w-[1200px] mx-auto px-6 pt-12 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center min-h-[480px]">
+
+          {/* Left — copy */}
+          <div className="flex flex-col justify-center order-2 lg:order-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-5">
+              New Season
+            </p>
+            <h1 className="text-[clamp(1.8rem,4vw,2.8rem)] font-medium leading-[1.15] tracking-tight text-ink mb-5">
+              Elegance is not about being noticed,{" "}
+              <span className="text-ink-tertiary">
+                it&apos;s about being remembered.
+              </span>
+            </h1>
+            <p className="text-[14px] text-ink-secondary leading-relaxed max-w-sm mb-7">
+              Curated women&apos;s fashion and shoes — designed for the modern Ethiopian woman.
+            </p>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 bg-ink text-surface-elevated text-[13px] font-medium px-6 py-2.5 rounded-full hover:bg-accent transition-colors"
+              >
+                Shop Collection
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </Link>
+              <Link
+                href="/products?category=shoes"
+                className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-secondary border border-edge px-6 py-2.5 rounded-full hover:border-ink hover:text-ink transition-colors"
+              >
+                Shop Shoes
+              </Link>
             </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-body-md text-body-md text-primary uppercase tracking-wide">Essential Trench Coat</h3>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">ETB 14,500</p>
-            </div>
-          </Link>
-          
-          <div className="md:col-span-4 flex flex-col gap-16">
-            <Link href="/products/poplin-shirt" className="group cursor-pointer block">
-              <div className="w-full aspect-[3/4] bg-surface-container overflow-hidden mb-6 relative">
-                <img 
-                  alt="Close-up detail shot of crisp white cotton poplin shirt collar and hidden placket, soft diffused studio lighting" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCttIhkRlgiTmG4wXtEv-Jiyh7FVvpqlmvCcYOqzcz_tLkQoQy7cAdkh0Y3SUoOupR6zoWYnchTk3HUJUt5ZRHZQCol_t3L39vy7Lis6wiNsk5h0AcRvFRXPN-zx1zor8CtevtXIaoJu437pWjbgdmG9Wf-dq5KhFPsfe0NiZ6SKOKofmvJs3Wpz9SU5x_0weum5OQSDXXgCmWghEJAb-y153c5DgfPPViWqdPkflpiJJUWGiWaeC1qXJuLZkA7tDaq3iwMKmXlPu2"
-                />
-                <div className="absolute inset-0 border border-outline-variant opacity-20"></div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h3 className="font-body-md text-body-md text-primary uppercase tracking-wide">Poplin Standard Shirt</h3>
-                <p className="font-label-sm text-label-sm text-on-surface-variant">ETB 6,200</p>
-              </div>
-            </Link>
-            
-            <Link href="/products/leather-derby" className="group cursor-pointer block">
-              <div className="w-full aspect-[3/4] bg-surface-container overflow-hidden mb-6 relative">
-                <img 
-                  alt="Minimalist laydown of sleek black leather derby shoes on a cool grey concrete textured surface" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3PixV5NI_Mu2SUd9d4QNqbRyVkvWmaLV9aG-qfB1ph90gzENeb-CBU6DwUQu6MN6-LNGLpmIAOgefaQz_CbjQPNk6dxcNsWRxPrj4kLuZ7IDL2vPvivPdPmjF8NNx9IUJoObXfcj4oFCofOuWnt795V4dlcWiX_gitJ9GzTnYKsWYGc9FDolJxoruJEKAiXfpD1oCSfOvZfzlT8Gw9h2WDFp9F1bH42t_0FAgn76I5EjE_n4su3q0t8Ug9AgYqpqgDjTtkqhGSU3E"
-                />
-                <div className="absolute inset-0 border border-outline-variant opacity-20"></div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h3 className="font-body-md text-body-md text-primary uppercase tracking-wide">Leather Derby</h3>
-                <p className="font-label-sm text-label-sm text-on-surface-variant">ETB 18,900</p>
-              </div>
-            </Link>
           </div>
+
+          {/* Right — featured image */}
+          <div className="relative order-1 lg:order-2 h-[400px] lg:h-[520px] bg-surface-subtle rounded-2xl overflow-hidden">
+            <img
+              alt={featured.name}
+              src={featured.images[0]}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+          </div>
+
         </div>
       </section>
-    </main>
+
+      {/* ── Categories row ────────────────────────────────────── */}
+      <section className="max-w-[1200px] mx-auto px-6 pb-20">
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+          {["All", "Tops", "Dresses", "Shoes", "Accessories", "Outerwear"].map(
+            (cat, i) => (
+              <Link
+                key={cat}
+                href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
+                className={`px-5 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors ${
+                  i === 0
+                    ? "bg-ink text-surface-elevated"
+                    : "bg-surface-muted text-ink-secondary hover:bg-edge hover:text-ink"
+                }`}
+              >
+                {cat}
+              </Link>
+            )
+          )}
+        </div>
+      </section>
+
+      {/* ── Product grid ──────────────────────────────────────── */}
+      <section className="max-w-[1200px] mx-auto px-6 pb-28">
+        <div className="flex items-baseline justify-between mb-10">
+          <h2 className="text-[22px] font-medium text-ink">Just Arrived</h2>
+          <Link
+            href="/products"
+            className="text-[13px] text-ink-secondary hover:text-accent transition-colors flex items-center gap-1"
+          >
+            View all
+            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+          {gridProducts.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Brand story strip ─────────────────────────────────── */}
+      <section className="border-t border-edge">
+        <div className="max-w-[1200px] mx-auto px-6 py-24 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-4">
+            About Us
+          </p>
+          <h2 className="text-[clamp(1.4rem,3vw,2rem)] font-medium text-ink leading-snug max-w-2xl mx-auto mb-5">
+            We believe fashion should celebrate who you are — not define you.
+          </h2>
+          <p className="text-[15px] text-ink-secondary leading-relaxed max-w-lg mx-auto">
+            Habesha Store is a home for curated women&apos;s fashion that brings together Ethiopian heritage and contemporary design.
+          </p>
+        </div>
+      </section>
+    </>
   );
 }

@@ -1,90 +1,88 @@
-import Link from "next/link";
 import prisma from "@/lib/prisma";
+import ProductCard from "@/components/ui/ProductCard";
+import Link from "next/link";
 
-// Demo products fallback when DB is empty
 const demoProducts = [
   {
-    id: "essential-trench",
-    name: "Essential Trench Coat",
-    basePrice: 14500,
-    category: "Outerwear",
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBYQROsaOz5lIZ5Hx8tZAUnOdCASKmdo6-QuBtby4IBiXrn3SC_tfNbjtDvDYf9kFlhKy00vVtwhjttSEFF7WpRbX1LQOALP7qKhA1ExFc7p32EccVgXn7qU3Nre9NC0T9sFeeChsPOT2grBLoPXsmHX7KEisGXlF0UngjcZAdw55B0r_FCbRcCuz-C7lHZOBrfL--iib9Qtv7E6K12wP1g6LqXcgCJpKv83DyuhCnD8aWSBtLZ1S28fATHeIfjnVY0i5DxOrIzbA5i",
-    ],
+    id: "classic-cotton-tee",
+    name: "Aselefech Cotton Blouse",
+    basePrice: 1200,
+    category: "Tops",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuD9Vbj7DWnXquyQNszZB7dwrr-5ikOvkHDcQ4ceHjs82I4W0pi3vzBgnU1B_u_d_NTILYXD9ksjtpyHTsLSsw6s1E0PD1kFIoMk5i8oY_E0VG3cCZEgH0FqX_gI8cZ38E8PCQEwoieaS8qeHFWTxzb3ewvl67n2dRrIwA9chTxr8Ue40sN_8gXQyXhq9JfadQ8aoz1FOl7IkHyrmcrN8d_VO_w5bzAeGFqzhNd5NQCwBpSoC9VWXW7xOY79nCxNXfDc-mwD42Av44mI"],
   },
   {
-    id: "poplin-shirt",
-    name: "Poplin Standard Shirt",
-    basePrice: 6200,
-    category: "Tops",
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDCttIhkRlgiTmG4wXtEv-Jiyh7FVvpqlmvCcYOqzcz_tLkQoQy7cAdkh0Y3SUoOupR6zoWYnchTk3HUJUt5ZRHZQCol_t3L39vy7Lis6wiNsk5h0AcRvFRXPN-zx1zor8CtevtXIaoJu437pWjbgdmG9Wf-dq5KhFPsfe0NiZ6SKOKofmvJs3Wpz9SU5x_0weum5OQSDXXgCmWghEJAb-y153c5DgfPPViWqdPkflpiJJUWGiWaeC1qXJuLZkA7tDaq3iwMKmXlPu2",
-    ],
+    id: "tailored-trousers",
+    name: "Tailored Wide-Leg Trousers",
+    basePrice: 3500,
+    category: "Bottoms",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuDWZx8h6mSUA8ZaNkZj-n6I2exFkHfN2Fcb5LkHcQttMghIgk_72e4BKCZ0jp7kpGzmpTykLgiWI-BmDVUiozsLVGG6tyFLkWoC8_xV41oHJ7L9pyYjCt5vI21HArVSV4Yu4dCKX7Dg9C75SYunr9VqFL4jTZNWNwdU4GalqF1p9kZXzPNzFhHlP7GSYv_CvjYIRw7_WdpMjoRmg86Y91WpXCrkH3CxX8h2_JSiZGKs2RVNGXIxXiMSNRBkV5ICPtM8UaQqqnIx41bn"],
+  },
+  {
+    id: "structured-trench",
+    name: "Structured Trench Coat",
+    basePrice: 8900,
+    category: "Outerwear",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuCN7iqEsegLe-Fy0dFJjW2GFaPcyXrq4kBCfjwI4PiVFiE5GjfdDUfbrV-fKSgYIAozQboBsQiOVUz9T_iwqBFUOMTpho4D1KLnW696lG6ThtMxf451e6GEuXD5wp4-uIfjK9aZpFaiRtW8VBYvinMuIXcrZcdZKccQZ2iQ1E0SOTEiu-O7oDp9oxsWS7Mw5mVEJSPT0_1iXHiW3hl5e9fscvDJ_chlMa2zx-3-FGZKayUVpUxSfO2fQ1CZ11XqjhE99Bh7qoNvnN-E"],
+  },
+  {
+    id: "geometric-pendant",
+    name: "Gold Pendant Necklace",
+    basePrice: 2400,
+    category: "Accessories",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuCynCF_GrO9NXjOzVd4M4iqJzVtS8uNk537td1h_qKGWpWQmoDoJTS8QauYD8vFldXsdgZxs1QsyjM6jOdcoLXx4cRHO28cUubm2TL6HnTxSQIYViqad7otgEBssSm06Qp3PHl8T3EaO3ODoBMZpBmdIlfQxoCfM9uTayWRPqwChTLfQUskaEA5i6m9Uv9NFx6_olNaAY_1c4E41g7rZljsq2FXTLRRcxpskUyUgULqqD8q7qC8srFBd_whPjh3CB7ylrzuZCNLQ0tE"],
+  },
+  {
+    id: "minimalist-sneaker",
+    name: "Minimal Leather Sneakers",
+    basePrice: 5400,
+    category: "Shoes",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuBKGmy0jdacITCG8ojZA4XRxLA8ThYLZ2WlMg-AMV23pDO0MPO68h_W9tQ6KbjA1AjeVe1LQobDwc_vJbwAikx_o-90zP6jbeQyzOMyW5oTpoFSIEVpNZqZNZaGbqDBlh2y2OEs6bMsVtPgoWA3tAQkO4kXZsWcAZ9VuDPWbnQPcxIQm3G7F-GIBohix2hNU0xFF9b2tS8fkqG4pGhLVVhU5-0IZazBCN1pBfNvXXkPSiZVn17K0W5ZFfDQTSlfkyS5OYB77fFVmZ8w"],
   },
   {
     id: "leather-derby",
-    name: "Leather Derby",
-    basePrice: 18900,
-    category: "Footwear",
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuA3PixV5NI_Mu2SUd9d4QNqbRyVkvWmaLV9aG-qfB1ph90gzENeb-CBU6DwUQu6MN6-LNGLpmIAOgefaQz_CbjQPNk6dxcNsWRxPrj4kLuZ7IDL2vPvivPdPmjF8NNx9IUJoObXfcj4oFCofOuWnt795V4dlcWiX_gitJ9GzTnYKsWYGc9FDolJxoruJEKAiXfpD1oCSfOvZfzlT8Gw9h2WDFp9F1bH42t_0FAgn76I5EjE_n4su3q0t8Ug9AgYqpqgDjTtkqhGSU3E",
-    ],
+    name: "Leather Pointed Heels",
+    basePrice: 7800,
+    category: "Shoes",
+    images: ["https://lh3.googleusercontent.com/aida-public/AB6AXuA3PixV5NI_Mu2SUd9d4QNqbRyVkvWmaLV9aG-qfB1ph90gzENeb-CBU6DwUQu6MN6-LNGLpmIAOgefaQz_CbjQPNk6dxcNsWRxPrj4kLuZ7IDL2vPvivPdPmjF8NNx9IUJoObXfcj4oFCofOuWnt795V4dlcWiX_gitJ9GzTnYKsWYGc9FDolJxoruJEKAiXfpD1oCSfOvZfzlT8Gw9h2WDFp9F1bH42t_0FAgn76I5EjE_n4su3q0t8Ug9AgYqpqgDjTtkqhGSU3E"],
   },
 ];
 
 export default async function ProductsPage() {
   let products: typeof demoProducts = [];
-
   try {
-    const dbProducts = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    if (dbProducts.length > 0) {
-      products = dbProducts;
-    } else {
-      products = demoProducts;
-    }
-  } catch {
-    products = demoProducts;
-  }
+    const db = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+    if (db.length > 0) products = db;
+  } catch { /* ignore */ }
+  if (products.length === 0) products = demoProducts;
 
   return (
-    <main className="max-w-[1440px] mx-auto px-8 md:px-[48px] py-[120px]">
-      <div className="flex items-end justify-between mb-16 border-b border-outline-variant pb-8">
-        <h1 className="font-headline-lg text-headline-lg text-primary uppercase">
-          All Collections
-        </h1>
-        <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
-          {products.length} items
-        </span>
+    <div className="max-w-[1200px] mx-auto px-6 py-16">
+      <div className="flex items-baseline justify-between mb-10">
+        <div>
+          <h1 className="text-[28px] font-medium text-ink mb-1">Shop All</h1>
+          <p className="text-[13px] text-ink-tertiary">{products.length} pieces</p>
+        </div>
+        <div className="hidden md:flex items-center gap-2">
+          {["All", "Tops", "Dresses", "Shoes", "Accessories"].map((cat, i) => (
+            <Link
+              key={cat}
+              href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
+              className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors ${
+                i === 0
+                  ? "bg-ink text-surface-elevated"
+                  : "bg-surface-muted text-ink-secondary hover:text-ink"
+              }`}
+            >
+              {cat}
+            </Link>
+          ))}
+        </div>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-[24px] gap-y-16">
-        {products.map((product) => (
-          <Link
-            key={product.id}
-            href={`/products/${product.id}`}
-            className="group cursor-pointer block"
-          >
-            <div className="w-full aspect-[3/4] bg-surface-container overflow-hidden mb-6 relative">
-              <img
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                src={product.images[0]}
-              />
-              <div className="absolute inset-0 border border-outline-variant opacity-20"></div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-body-md text-body-md text-primary uppercase tracking-wide">
-                {product.name}
-              </h3>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">
-                ETB {product.basePrice.toLocaleString()}
-              </p>
-            </div>
-          </Link>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+        {products.map((p) => (
+          <ProductCard key={p.id} product={p} />
         ))}
       </div>
-    </main>
+    </div>
   );
 }
