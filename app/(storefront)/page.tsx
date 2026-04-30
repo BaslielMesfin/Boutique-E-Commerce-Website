@@ -81,52 +81,7 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-6 pt-12 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center min-h-[480px]">
 
-          {/* Left — copy */}
-          <div className="flex flex-col justify-center order-2 lg:order-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-5">
-              New Season
-            </p>
-            <h1 className="text-[clamp(1.8rem,4vw,2.8rem)] font-medium leading-[1.15] tracking-tight text-ink mb-5">
-              Elegance is not about being noticed,{" "}
-              <span className="text-ink-tertiary">
-                it&apos;s about being remembered.
-              </span>
-            </h1>
-            <p className="text-[14px] text-ink-secondary leading-relaxed max-w-sm mb-7">
-              Curated women&apos;s fashion and shoes — designed for the modern Ethiopian woman.
-            </p>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 bg-ink text-surface-elevated text-[13px] font-medium px-6 py-2.5 rounded-full hover:bg-accent transition-colors"
-              >
-                Shop Collection
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-              </Link>
-              <Link
-                href="/products?category=shoes"
-                className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-secondary border border-edge px-6 py-2.5 rounded-full hover:border-ink hover:text-ink transition-colors"
-              >
-                Shop Shoes
-              </Link>
-            </div>
-          </div>
-
-          {/* Right — featured image */}
-          <div className="relative order-1 lg:order-2 h-[400px] lg:h-[520px] bg-surface-subtle rounded-2xl overflow-hidden">
-            <img
-              alt={featured.name}
-              src={featured.images[0]}
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          </div>
-
-        </div>
-      </section>
 
       {/* ── Categories row ────────────────────────────────────── */}
       <section className="max-w-[1200px] mx-auto px-6 pb-20">
@@ -169,20 +124,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Brand story strip ─────────────────────────────────── */}
-      <section className="border-t border-edge">
-        <div className="max-w-[1200px] mx-auto px-6 py-24 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-4">
-            About Us
-          </p>
-          <h2 className="text-[clamp(1.4rem,3vw,2rem)] font-medium text-ink leading-snug max-w-2xl mx-auto mb-5">
-            We believe fashion should celebrate who you are — not define you.
-          </h2>
-          <p className="text-[15px] text-ink-secondary leading-relaxed max-w-lg mx-auto">
-            Habesha Store is a home for curated women&apos;s fashion that brings together Ethiopian heritage and contemporary design.
-          </p>
-        </div>
-      </section>
+
     </>
   );
 }
