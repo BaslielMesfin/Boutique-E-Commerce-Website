@@ -1,10 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+type CartItem = {
+  variantId: string;
+  name: string;
+  size: string;
+  color: string;
+  price: number;
+  quantity: number;
+  image: string;
+};
+
+const SUB_CITIES = [
+  "Addis Ketema", "Akaky Kaliti", "Arada", "Bole", "Gulele", 
+  "Kirkos", "Kolfe Keranio", "Lemi Kura", "Lideta", "Nifas Silk-Lafto", "Yeka"
+];
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -13,18 +31,27 @@ export default function CheckoutPage() {
     instructions: "",
   });
 
-  const mockItem = {
-    variantId: "v1",
-    name: "Structured Trench Coat",
-    size: "S",
-    color: "Midnight",
-    price: 8900,
-    quantity: 1,
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAGszCDr_gDnn7Zjxv6du_zwnQp_tzD2xIt3D9tJACWLHSEUCYC4bwmdswoeRvSlYFyLb0Vlj6e0817cbVq9VRyJD76oDc0Jr4dxubhaqMkPjTFT8UIyHWvHqCGaQnYQ6hWIIElgvZP42G4V0_tQYd1hTF_Ac9Nle_2vkwLVlX8QvHgzq15NtDNE3Sh2hUSV1Fh6sqmDsjGmpNsW8n5ok_7GWgcuN5zBiuUDiR8ybq0yMS3PrluPARDd2R3iLi8Pb6wEwW5XJC1RtYa",
-  };
+  useEffect(() => {
+    const cart = localStorage.getItem("habesha_cart");
+    if (cart) {
+      try {
+        const parsed = JSON.parse(cart);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCartItems(parsed);
+        } else {
+          router.push("/products"); // empty cart
+        }
+      } catch {
+        router.push("/products");
+      }
+    } else {
+      router.push("/products");
+    }
+  }, [router]);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -40,19 +67,26 @@ export default function CheckoutPage() {
           customerPhone: `+251${formData.phone}`,
           deliverySubCity: formData.subCity,
           deliveryWoreda: formData.woreda,
-          deliveryLandmark: formData.instructions,
-          items: [{ variantId: mockItem.variantId, quantity: mockItem.quantity }],
+          deliveryLandmark: formData.instructions || undefined,
+          items: cartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
         }),
       });
       const data = await res.json();
-      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
-      else alert(data.error || "Payment failed. Please try again.");
+      if (data.checkoutUrl) {
+        localStorage.removeItem("habesha_cart");
+        window.dispatchEvent(new Event("cart_updated"));
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert(data.error || "Payment failed. Please try again.");
+      }
     } catch {
       alert("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
+
+  if (cartItems.length === 0) return null; // loading or redirecting
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 min-h-[70vh]">
@@ -98,28 +132,32 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label className="text-[12px] text-ink-secondary block mb-2" htmlFor="subCity">Sub City</label>
-              <input
-                required id="subCity" name="subCity" type="text"
+              <select
+                required id="subCity" name="subCity"
                 value={formData.subCity} onChange={onChange}
-                placeholder="Bole"
-                className="w-full bg-transparent border-b border-edge px-0 py-2.5 text-[14px] text-ink focus:outline-none focus:border-accent transition-colors placeholder:text-ink-tertiary"
-              />
+                className="w-full bg-transparent border-b border-edge px-0 py-2.5 text-[14px] text-ink focus:outline-none focus:border-accent transition-colors"
+              >
+                <option value="" disabled>Select Sub City</option>
+                {SUB_CITIES.map(city => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="text-[12px] text-ink-secondary block mb-2" htmlFor="woreda">Woreda</label>
               <input
                 required id="woreda" name="woreda" type="text"
                 value={formData.woreda} onChange={onChange}
-                placeholder="03"
+                placeholder="e.g. 03"
                 className="w-full bg-transparent border-b border-edge px-0 py-2.5 text-[14px] text-ink focus:outline-none focus:border-accent transition-colors placeholder:text-ink-tertiary"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-[12px] text-ink-secondary block mb-2" htmlFor="instructions">Delivery Instructions</label>
+            <label className="text-[12px] text-ink-secondary block mb-2" htmlFor="instructions">Delivery Instructions (Optional)</label>
             <textarea
-              required id="instructions" name="instructions" rows={3}
+              id="instructions" name="instructions" rows={3}
               value={formData.instructions} onChange={onChange}
               placeholder="Nearest landmark, gate code, etc."
               className="w-full bg-transparent border-b border-edge px-0 py-2.5 text-[14px] text-ink focus:outline-none focus:border-accent resize-none transition-colors placeholder:text-ink-tertiary"
@@ -145,22 +183,27 @@ export default function CheckoutPage() {
         <div className="bg-surface-subtle rounded-2xl p-8 sticky top-24">
           <h3 className="text-[18px] font-medium text-ink mb-6">Order Summary</h3>
 
-          <div className="flex gap-5 mb-6 pb-6 border-b border-edge">
-            <div className="relative w-20 h-28 bg-surface-muted rounded-xl overflow-hidden flex-shrink-0">
-              <img alt={mockItem.name} src={mockItem.image} className="absolute inset-0 w-full h-full object-cover object-center" />
-            </div>
-            <div className="flex flex-col justify-between py-1">
-              <div>
-                <h4 className="text-[14px] font-medium text-ink mb-1">{mockItem.name}</h4>
-                <p className="text-[13px] text-ink-secondary">Size: {mockItem.size} · {mockItem.color}</p>
-                <p className="text-[13px] text-ink-secondary">Qty: {mockItem.quantity}</p>
+          <div className="flex flex-col gap-5 mb-6 pb-6 border-b border-edge max-h-[300px] overflow-y-auto no-scrollbar">
+            {cartItems.map((item, idx) => (
+              <div key={idx} className="flex gap-5">
+                <div className="relative w-20 h-28 bg-surface-muted rounded-xl overflow-hidden flex-shrink-0">
+                  <img alt={item.name} src={item.image} className="absolute inset-0 w-full h-full object-cover object-center" />
+                </div>
+                <div className="flex flex-col justify-between py-1">
+                  <div>
+                    <h4 className="text-[14px] font-medium text-ink mb-1">{item.name}</h4>
+                    <p className="text-[13px] text-ink-secondary">Size: {item.size} · {item.color}</p>
+                    <p className="text-[13px] text-ink-secondary">Qty: {item.quantity}</p>
+                  </div>
+                  <span className="text-[14px] font-medium text-ink">ETB {(item.price * item.quantity).toLocaleString()}</span>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
           <div className="flex justify-between text-[14px] mb-2">
             <span className="text-ink-secondary">Subtotal</span>
-            <span className="text-ink">ETB {mockItem.price.toLocaleString()}</span>
+            <span className="text-ink">ETB {subtotal.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-[14px] mb-6 pb-6 border-b border-edge">
             <span className="text-ink-secondary">Shipping</span>
@@ -168,7 +211,7 @@ export default function CheckoutPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-[16px] font-semibold text-ink">Total</span>
-            <span className="text-[18px] font-semibold text-ink">ETB {mockItem.price.toLocaleString()}</span>
+            <span className="text-[18px] font-semibold text-ink">ETB {subtotal.toLocaleString()}</span>
           </div>
         </div>
       </div>

@@ -46,3 +46,48 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
 }
+
+export async function POST(req: Request) {
+  if (!(await isAuthed())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    const body = await req.json();
+    const product = await prisma.product.create({
+      data: {
+        name: body.name,
+        description: body.description || "",
+        basePrice: Number(body.basePrice),
+        category: body.category || "General",
+        images: body.images || [],
+        variants: {
+          create: body.variants || [],
+        },
+      },
+    });
+    return NextResponse.json(product);
+  } catch (error: any) {
+    console.error("Error creating product:", error);
+    return NextResponse.json({ error: "Failed to create product", message: error?.message || String(error) }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  if (!(await isAuthed())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+
+    // Prisma relation handles cascading deletes for variants if setup, or we can just delete variants first.
+    await prisma.variant.deleteMany({ where: { productId: id } });
+    await prisma.product.delete({ where: { id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+  }
+}

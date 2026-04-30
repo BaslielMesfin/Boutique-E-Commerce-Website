@@ -56,7 +56,7 @@ export async function POST(req: Request) {
         customerPhone,
         deliverySubCity,
         deliveryWoreda,
-        deliveryLandmark,
+        deliveryLandmark: deliveryLandmark || undefined,
         totalAmount,
         chapaReference,
         paymentStatus: 'PENDING',
@@ -67,19 +67,20 @@ export async function POST(req: Request) {
     });
 
     // Initialize Chapa transaction
+    const phoneDigits = customerPhone.replace(/\D/g, '');
     const chapaPayload = {
       amount: totalAmount.toString(),
       currency: 'ETB',
-      email: 'customer@example.com', // Chapa requires email, use dummy if not provided
+      email: `${phoneDigits}@habesha.store`,
       first_name: customerName.split(' ')[0] || 'Customer',
-      last_name: customerName.split(' ')[1] || '',
+      last_name: customerName.split(' ').slice(1).join(' ') || 'Customer',
       phone_number: customerPhone,
       tx_ref: chapaReference,
       callback_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/success?ref=${chapaReference}`,
       return_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/success?ref=${chapaReference}`,
       customization: {
-        title: 'Boutique E-Commerce',
-        description: 'Payment for your order'
+        title: 'Habesha Store',
+        description: 'Order payment'
       }
     };
 
@@ -104,8 +105,12 @@ export async function POST(req: Request) {
       orderId: order.id
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Checkout error:', error);
+    // Return specific Prisma error if possible
+    if (error?.code) {
+      return NextResponse.json({ error: `Database error: ${error.code}` }, { status: 500 });
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

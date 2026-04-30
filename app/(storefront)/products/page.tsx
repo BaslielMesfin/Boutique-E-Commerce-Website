@@ -47,7 +47,13 @@ const demoProducts = [
   },
 ];
 
-export default async function ProductsPage() {
+const CATEGORIES = ["All", "Tops", "Bottoms", "Shoes", "Accessories", "Outerwear"];
+
+export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ category?: string; search?: string }> }) {
+  const resolvedParams = await searchParams;
+  const filterCategory = resolvedParams.category?.toLowerCase();
+  const searchQuery = resolvedParams.search?.toLowerCase();
+
   let products: typeof demoProducts = [];
   try {
     const db = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
@@ -55,27 +61,46 @@ export default async function ProductsPage() {
   } catch { /* ignore */ }
   if (products.length === 0) products = demoProducts;
 
+  if (filterCategory && filterCategory !== "all") {
+    products = products.filter((p) => p.category?.toLowerCase() === filterCategory);
+  }
+
+  if (searchQuery) {
+    products = products.filter((p) => p.name.toLowerCase().includes(searchQuery));
+  }
+
+  const title = searchQuery
+    ? `Results for "${resolvedParams.search}"`
+    : filterCategory && filterCategory !== "all"
+    ? CATEGORIES.find(c => c.toLowerCase() === filterCategory) || "Shop All"
+    : "Shop All";
+
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-16">
       <div className="flex items-baseline justify-between mb-10">
         <div>
-          <h1 className="text-[28px] font-medium text-ink mb-1">Shop All</h1>
+          <h1 className="text-[28px] font-medium text-ink mb-1">{title}</h1>
           <p className="text-[13px] text-ink-tertiary">{products.length} pieces</p>
         </div>
         <div className="hidden md:flex items-center gap-2">
-          {["All", "Tops", "Dresses", "Shoes", "Accessories"].map((cat, i) => (
-            <Link
-              key={cat}
-              href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
-              className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors ${
-                i === 0
-                  ? "bg-ink text-surface-elevated"
-                  : "bg-surface-muted text-ink-secondary hover:text-ink"
-              }`}
-            >
-              {cat}
-            </Link>
-          ))}
+          {CATEGORIES.map((cat) => {
+            const isActive = cat === "All"
+              ? !filterCategory || filterCategory === "all"
+              : filterCategory === cat.toLowerCase();
+            return (
+              <Link
+                key={cat}
+                href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
+                className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors ${
+                  isActive
+                    ? "bg-ink text-surface-elevated"
+                    : "bg-surface-muted text-ink-secondary hover:text-ink"
+                }`}
+              >
+                {cat}
+              </Link>
+            );
+          })}
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
@@ -83,6 +108,13 @@ export default async function ProductsPage() {
           <ProductCard key={p.id} product={p} />
         ))}
       </div>
+      {products.length === 0 && (
+        <div className="text-center py-20">
+          <p className="text-ink-secondary text-[15px]">No products found.</p>
+          <Link href="/products" className="text-accent text-[13px] mt-2 inline-block hover:underline">View all products</Link>
+        </div>
+      )}
     </div>
   );
 }
+

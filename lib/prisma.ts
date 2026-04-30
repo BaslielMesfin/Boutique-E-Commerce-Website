@@ -1,21 +1,26 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
+
+function getDirectUrl(): string {
+  const dbUrl = process.env.DATABASE_URL || '';
+  if (dbUrl.startsWith('prisma+postgres://')) {
+    try {
+      const url = new URL(dbUrl);
+      const apiKey = url.searchParams.get('api_key') || '';
+      const decoded = JSON.parse(Buffer.from(apiKey, 'base64').toString('utf-8'));
+      return decoded.databaseUrl;
+    } catch {
+      return 'postgres://postgres:postgres@localhost:51214/template1?sslmode=disable';
+    }
+  }
+  return dbUrl;
+}
 
 const prismaClientSingleton = () => {
-  const databaseUrl = process.env.DATABASE_URL || '';
-  
-  // If using Prisma Accelerate / local Prisma Postgres (prisma+postgres:// or prisma://)
-  if (databaseUrl.startsWith('prisma+postgres://') || databaseUrl.startsWith('prisma://')) {
-    return new PrismaClient({
-      accelerateUrl: databaseUrl,
-    });
-  }
-  
-  // If using a direct PostgreSQL connection (postgresql://)
-  const { PrismaPg } = require('@prisma/adapter-pg');
-  const pg = require('pg');
-  const pool = new pg.Pool({ connectionString: databaseUrl });
+  const directUrl = getDirectUrl();
+  const pool = new pg.Pool({ connectionString: directUrl });
   const adapter = new PrismaPg(pool);
-  
   return new PrismaClient({ adapter });
 }
 
@@ -28,3 +33,4 @@ const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
 export default prisma
 
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
+

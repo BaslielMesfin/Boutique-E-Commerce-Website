@@ -56,11 +56,49 @@ export default function ProductClientView({ product }: { product: Product }) {
     if (isSizeInStock(size)) setSelectedSize(size);
   };
 
+  const [toast, setToast] = useState<{ message: string; visible: boolean } | null>(null);
+
   const handleAddToCart = () => {
     if (!selectedColor || !selectedSize) return;
     const v = product.variants.find((x) => x.size === selectedSize && x.color === selectedColor);
     if (!v || v.stockQuantity <= 0) return;
-    alert(`Added to bag: ${product.name} — ${selectedSize}, ${selectedColor}`);
+
+    // Save to localStorage cart
+    const cartStr = localStorage.getItem("habesha_cart");
+    let cart = [];
+    try {
+      cart = cartStr ? JSON.parse(cartStr) : [];
+      if (!Array.isArray(cart)) cart = [];
+    } catch {
+      cart = [];
+    }
+
+    const newItem = {
+      variantId: v.id,
+      name: product.name,
+      size: selectedSize,
+      color: selectedColor,
+      price: product.basePrice,
+      quantity: 1,
+      image: mainImage,
+    };
+
+    // If item exists, just increment quantity
+    const existingIndex = cart.findIndex((item: any) => item.variantId === v.id);
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push(newItem);
+    }
+
+    localStorage.setItem("habesha_cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cart_updated"));
+
+    // Show toast
+    setToast({ message: `Added to bag: ${product.name} — ${selectedSize}, ${selectedColor}`, visible: true });
+    setTimeout(() => {
+      setToast((prev) => (prev ? { ...prev, visible: false } : null));
+    }, 3000);
   };
 
   const isDisabled = !selectedColor || !selectedSize;
@@ -202,6 +240,17 @@ export default function ProductClientView({ product }: { product: Product }) {
           </div>
         )}
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-ink text-surface-elevated text-[13px] px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 ${
+            toast.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }

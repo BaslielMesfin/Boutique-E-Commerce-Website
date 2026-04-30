@@ -34,7 +34,7 @@ model Order {
   customerPhone     String
   deliverySubCity   String
   deliveryWoreda    String
-  deliveryLandmark  String      @db.Text
+  deliveryLandmark  String?     @db.Text
   totalAmount       Float
   chapaReference    String      @unique
   paymentStatus     PaymentStatus @default(PENDING)

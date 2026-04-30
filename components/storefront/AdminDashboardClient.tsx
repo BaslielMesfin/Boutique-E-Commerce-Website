@@ -94,6 +94,36 @@ export default function AdminDashboardClient() {
     }
   };
 
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      const res = await fetch(`/api/admin/products?id=${id}`, { method: "DELETE" });
+      if (res.ok) setProducts(prev => prev.filter(p => p.id !== id));
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+    }
+  };
+
+  const handleAddProduct = async (newProduct: Partial<Product>) => {
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProduct),
+      });
+      if (res.ok) {
+        const added = await res.json();
+        setProducts(prev => [added, ...prev]);
+        return true;
+      }
+    } catch (err) {
+      console.error("Failed to add product:", err);
+    }
+    return false;
+  };
+
+  const [isAdding, setIsAdding] = useState(false);
+
   const paidOrders = orders.filter((o) => o.paymentStatus === "PAID");
   const totalRevenue = paidOrders.reduce((acc, o) => acc + o.totalAmount, 0);
   const totalStock = products.reduce(
@@ -176,8 +206,17 @@ export default function AdminDashboardClient() {
                 Manage your inventory and catalog offerings.
               </p>
             </div>
+            <button
+              onClick={() => setIsAdding(true)}
+              className="bg-ink text-surface-elevated px-6 py-2.5 rounded-full font-medium text-[13px] hover:bg-accent transition-colors"
+            >
+              Add Product
+            </button>
           </div>
-          <ProductsTable products={products} onStockUpdate={handleStockUpdate} />
+          {isAdding && (
+            <AddProductModal onClose={() => setIsAdding(false)} onAdd={handleAddProduct} />
+          )}
+          <ProductsTable products={products} onStockUpdate={handleStockUpdate} onDelete={handleDeleteProduct} />
         </>
       )}
 
@@ -300,9 +339,11 @@ function OrdersTable({ orders }: { orders: Order[] }) {
 function ProductsTable({
   products,
   onStockUpdate,
+  onDelete,
 }: {
   products: Product[];
   onStockUpdate: (variantId: string, stock: number) => void;
+  onDelete: (id: string) => void;
 }) {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
 
@@ -441,6 +482,14 @@ function ProductsTable({
                           </div>
                         ))}
                       </div>
+                      <div className="mt-6 flex justify-end">
+                        <button
+                          onClick={() => onDelete(product.id)}
+                          className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                        >
+                          Delete Product
+                        </button>
+                      </div>
                     </div>
                   )}
                 </td>
@@ -449,6 +498,60 @@ function ProductsTable({
           })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function AddProductModal({ onClose, onAdd }: { onClose: () => void, onAdd: (p: any) => Promise<boolean> }) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "Tops",
+    basePrice: "",
+    imageUrl: "",
+    size: "M",
+    color: "Black",
+    stock: "10"
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const success = await onAdd({
+      name: formData.name,
+      category: formData.category,
+      basePrice: Number(formData.basePrice),
+      images: [formData.imageUrl],
+      variants: [{
+        size: formData.size,
+        color: formData.color,
+        stockQuantity: Number(formData.stock)
+      }]
+    });
+    setLoading(false);
+    if (success) onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-surface-elevated p-8 rounded-2xl w-full max-w-md">
+        <h3 className="text-xl font-medium mb-6 text-ink">Add New Product</h3>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input required type="text" placeholder="Product Name" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+          <input required type="text" placeholder="Category (e.g. Tops, Shoes)" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} />
+          <input required type="number" placeholder="Base Price (ETB)" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.basePrice} onChange={e => setFormData({...formData, basePrice: e.target.value})} />
+          <input required type="url" placeholder="Image URL" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            <input required type="text" placeholder="Size" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.size} onChange={e => setFormData({...formData, size: e.target.value})} />
+            <input required type="text" placeholder="Color" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} />
+            <input required type="number" placeholder="Stock" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+          </div>
+          <div className="flex gap-4 mt-6">
+            <button type="button" onClick={onClose} className="flex-1 py-3 text-ink-secondary hover:text-ink transition-colors">Cancel</button>
+            <button type="submit" disabled={loading} className="flex-1 py-3 bg-ink text-surface-elevated rounded-full hover:bg-accent transition-colors disabled:opacity-50">Save</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
