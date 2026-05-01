@@ -84,13 +84,13 @@ export default async function HomePage() {
 
 
       {/* ── Categories row ────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-6 pb-20">
-        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
-          {["All", "Tops", "Dresses", "Shoes", "Accessories", "Outerwear"].map(
+      <section className="max-w-[1200px] mx-auto px-6 pt-10 pb-20">
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 pt-4 border-t border-edge">
+          {["All", "Tops", "Bottoms", "Shoes", "Accessories", "Outerwear", "New In"].map(
             (cat, i) => (
               <Link
                 key={cat}
-                href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
+                href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase().replace(" ", "-")}`}
                 className={`px-5 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors ${
                   i === 0
                     ? "bg-ink text-surface-elevated"

@@ -100,6 +100,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Payment initialization failed' }, { status: 500 });
     }
 
+    // Notify admin via WhatsApp (fire-and-forget)
+    const itemSummary = orderItemsData.map((oi, i) => {
+      const item = items[i];
+      return `• ${item.quantity}x (Variant ${oi.variantId.slice(0, 8)}) — ETB ${oi.priceAtPurchase.toLocaleString()}`;
+    }).join('\n');
+
+    const whatsappMsg = `🛒 *New Order!*\n\n` +
+      `*Customer:* ${customerName}\n` +
+      `*Phone:* ${customerPhone}\n` +
+      `*Delivery:* ${deliverySubCity}, Woreda ${deliveryWoreda}\n` +
+      `*Total:* ETB ${totalAmount.toLocaleString()}\n` +
+      `*Ref:* ${chapaReference}\n\n` +
+      `*Items:*\n${itemSummary}`;
+
+    try {
+      await fetch(process.env.WHATSAPP_SERVICE_URL || 'http://localhost:3001/send-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phoneNumber: process.env.OWNER_PHONE_NUMBER,
+          message: whatsappMsg,
+        }),
+      });
+    } catch {
+      // WhatsApp notification is best-effort; don't block checkout
+      console.warn('WhatsApp notification failed (non-critical)');
+    }
+
     return NextResponse.json({ 
       checkoutUrl: chapaData.data.checkout_url,
       orderId: order.id

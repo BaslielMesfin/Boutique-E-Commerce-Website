@@ -502,56 +502,171 @@ function ProductsTable({
   );
 }
 
+const ADMIN_CATEGORIES = ["Tops", "Bottoms", "Shoes", "Accessories", "Outerwear"];
+const CLOTHING_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+const SHOE_SIZES = ["36", "37", "38", "39", "40", "41", "42", "43", "44"];
+const COLOR_PRESETS = ["Black", "White", "Beige", "Brown", "Gold", "Red", "Blue", "Navy", "Green", "Pink"];
+
+type VariantRow = { size: string; color: string; stock: string };
+
 function AddProductModal({ onClose, onAdd }: { onClose: () => void, onAdd: (p: any) => Promise<boolean> }) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "Tops",
-    basePrice: "",
-    imageUrl: "",
-    size: "M",
-    color: "Black",
-    stock: "10"
-  });
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("Tops");
+  const [basePrice, setBasePrice] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [variants, setVariants] = useState<VariantRow[]>([{ size: "M", color: "Black", stock: "10" }]);
+
+  const sizeOptions = category === "Shoes" ? SHOE_SIZES : category === "Accessories" ? ["OS"] : CLOTHING_SIZES;
+
+  // Update variant sizes when category changes
+  const handleCategoryChange = (cat: string) => {
+    setCategory(cat);
+    const defaultSize = cat === "Shoes" ? "38" : cat === "Accessories" ? "OS" : "M";
+    setVariants(prev => prev.map(v => ({ ...v, size: defaultSize })));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const addVariant = () => {
+    const defaultSize = category === "Shoes" ? "38" : category === "Accessories" ? "OS" : "M";
+    setVariants([...variants, { size: defaultSize, color: "Black", stock: "10" }]);
+  };
+
+  const removeVariant = (idx: number) => {
+    if (variants.length <= 1) return;
+    setVariants(variants.filter((_, i) => i !== idx));
+  };
+
+  const updateVariant = (idx: number, field: keyof VariantRow, value: string) => {
+    setVariants(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    let imageUrl = "";
+    // Upload image first
+    if (imageFile) {
+      const fd = new FormData();
+      fd.append("file", imageFile);
+      try {
+        const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        const uploadData = await uploadRes.json();
+        if (uploadData.url) imageUrl = uploadData.url;
+      } catch { /* ignore */ }
+    }
+
     const success = await onAdd({
-      name: formData.name,
-      category: formData.category,
-      basePrice: Number(formData.basePrice),
-      images: [formData.imageUrl],
-      variants: [{
-        size: formData.size,
-        color: formData.color,
-        stockQuantity: Number(formData.stock)
-      }]
+      name,
+      category,
+      basePrice: Number(basePrice),
+      images: imageUrl ? [imageUrl] : [],
+      variants: variants.map(v => ({
+        size: v.size,
+        color: v.color,
+        stockQuantity: Number(v.stock)
+      }))
     });
     setLoading(false);
     if (success) onClose();
   };
 
+  const inputClass = "w-full border-b border-edge py-2.5 outline-none text-ink text-sm bg-transparent focus:border-accent transition-colors";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-surface-elevated p-8 rounded-2xl w-full max-w-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-surface-elevated p-8 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <h3 className="text-xl font-medium mb-6 text-ink">Add New Product</h3>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input required type="text" placeholder="Product Name" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-          <input required type="text" placeholder="Category (e.g. Tops, Shoes)" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} />
-          <input required type="number" placeholder="Base Price (ETB)" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.basePrice} onChange={e => setFormData({...formData, basePrice: e.target.value})} />
-          <input required type="url" placeholder="Image URL" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
-          <div className="grid grid-cols-3 gap-4 mt-2">
-            <input required type="text" placeholder="Size" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.size} onChange={e => setFormData({...formData, size: e.target.value})} />
-            <input required type="text" placeholder="Color" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} />
-            <input required type="number" placeholder="Stock" className="border-b border-edge py-2 outline-none text-ink text-sm bg-transparent" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {/* Name */}
+          <input required type="text" placeholder="Product Name" className={inputClass} value={name} onChange={e => setName(e.target.value)} />
+
+          {/* Category Dropdown */}
+          <div>
+            <label className="text-[11px] font-medium uppercase tracking-wider text-ink-tertiary block mb-1">Category</label>
+            <select value={category} onChange={e => handleCategoryChange(e.target.value)} className={inputClass}>
+              {ADMIN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
-          <div className="flex gap-4 mt-6">
+
+          {/* Price */}
+          <input required type="number" placeholder="Base Price (ETB)" className={inputClass} value={basePrice} onChange={e => setBasePrice(e.target.value)} />
+
+          {/* Image Upload */}
+          <div>
+            <label className="text-[11px] font-medium uppercase tracking-wider text-ink-tertiary block mb-2">Product Image</label>
+            <div className="flex items-center gap-4">
+              {imagePreview && (
+                <div className="w-16 h-20 rounded-lg overflow-hidden bg-surface-muted flex-shrink-0">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <label className="flex-1 border-2 border-dashed border-edge rounded-xl px-4 py-6 text-center cursor-pointer hover:border-accent transition-colors">
+                <span className="material-symbols-outlined text-ink-tertiary text-[24px] block mb-1">cloud_upload</span>
+                <span className="text-[12px] text-ink-secondary">{imageFile ? imageFile.name : "Choose a file"}</span>
+                <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              </label>
+            </div>
+          </div>
+
+          {/* Variants */}
+          <div>
+            <div className="flex justify-between items-center mb-3">
+              <label className="text-[11px] font-medium uppercase tracking-wider text-ink-tertiary">Variants</label>
+              <button type="button" onClick={addVariant} className="text-[12px] text-accent hover:underline">+ Add Variant</button>
+            </div>
+            <div className="flex flex-col gap-3">
+              {variants.map((v, idx) => (
+                <div key={idx} className="flex items-end gap-2 bg-surface-subtle rounded-xl p-3">
+                  {/* Size */}
+                  <div className="flex-1">
+                    <label className="text-[10px] text-ink-tertiary block mb-1">{category === "Shoes" ? "Shoe Size" : "Size"}</label>
+                    <select value={v.size} onChange={e => updateVariant(idx, "size", e.target.value)} className="w-full bg-transparent border-b border-edge py-1.5 text-sm text-ink outline-none">
+                      {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  {/* Color */}
+                  <div className="flex-1">
+                    <label className="text-[10px] text-ink-tertiary block mb-1">Color</label>
+                    <input type="text" value={v.color} onChange={e => updateVariant(idx, "color", e.target.value)} className="w-full bg-transparent border-b border-edge py-1.5 text-sm text-ink outline-none" list={`colors-${idx}`} />
+                    <datalist id={`colors-${idx}`}>
+                      {COLOR_PRESETS.map(c => <option key={c} value={c} />)}
+                    </datalist>
+                  </div>
+                  {/* Stock */}
+                  <div className="w-16">
+                    <label className="text-[10px] text-ink-tertiary block mb-1">Stock</label>
+                    <input type="number" value={v.stock} onChange={e => updateVariant(idx, "stock", e.target.value)} className="w-full bg-transparent border-b border-edge py-1.5 text-sm text-ink outline-none" />
+                  </div>
+                  {/* Remove */}
+                  {variants.length > 1 && (
+                    <button type="button" onClick={() => removeVariant(idx)} className="text-red-400 hover:text-red-600 pb-1.5 text-lg leading-none">×</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4 mt-4">
             <button type="button" onClick={onClose} className="flex-1 py-3 text-ink-secondary hover:text-ink transition-colors">Cancel</button>
-            <button type="submit" disabled={loading} className="flex-1 py-3 bg-ink text-surface-elevated rounded-full hover:bg-accent transition-colors disabled:opacity-50">Save</button>
+            <button type="submit" disabled={loading} className="flex-1 py-3 bg-ink text-surface-elevated rounded-full hover:bg-accent transition-colors disabled:opacity-50">
+              {loading ? "Saving..." : "Save Product"}
+            </button>
           </div>
         </form>
       </div>
     </div>
   );
 }
+
+

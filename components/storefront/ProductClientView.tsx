@@ -58,22 +58,12 @@ export default function ProductClientView({ product }: { product: Product }) {
 
   const [toast, setToast] = useState<{ message: string; visible: boolean } | null>(null);
 
-  const handleAddToCart = () => {
+  const handleBuyNow = () => {
     if (!selectedColor || !selectedSize) return;
     const v = product.variants.find((x) => x.size === selectedSize && x.color === selectedColor);
     if (!v || v.stockQuantity <= 0) return;
 
-    // Save to localStorage cart
-    const cartStr = localStorage.getItem("habesha_cart");
-    let cart = [];
-    try {
-      cart = cartStr ? JSON.parse(cartStr) : [];
-      if (!Array.isArray(cart)) cart = [];
-    } catch {
-      cart = [];
-    }
-
-    const newItem = {
+    const buyItem = {
       variantId: v.id,
       name: product.name,
       size: selectedSize,
@@ -83,24 +73,31 @@ export default function ProductClientView({ product }: { product: Product }) {
       image: mainImage,
     };
 
-    // If item exists, just increment quantity
-    const existingIndex = cart.findIndex((item: any) => item.variantId === v.id);
-    if (existingIndex >= 0) {
-      cart[existingIndex].quantity += 1;
-    } else {
-      cart.push(newItem);
-    }
+    localStorage.setItem("habesha_buynow", JSON.stringify([buyItem]));
 
-    localStorage.setItem("habesha_cart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("cart_updated"));
-
-    // Show toast
-    setToast({ message: `Added to bag: ${product.name} — ${selectedSize}, ${selectedColor}`, visible: true });
+    // Show toast then redirect
+    setToast({ message: `${product.name} — ${selectedSize}, ${selectedColor}`, visible: true });
     setTimeout(() => {
-      setToast((prev) => (prev ? { ...prev, visible: false } : null));
-    }, 3000);
+      window.location.href = "/checkout";
+    }, 1200);
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    const text = `Check out ${product.name} on Habesha Store — ETB ${product.basePrice.toLocaleString()}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: product.name, text, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setToast({ message: "Link copied to clipboard!", visible: true });
+      setTimeout(() => setToast((prev) => (prev ? { ...prev, visible: false } : null)), 2500);
+    }
+  };
+
+  const isAllSoldOut = product.variants.every((v) => v.stockQuantity <= 0);
   const isDisabled = !selectedColor || !selectedSize;
 
   return (
@@ -126,6 +123,11 @@ export default function ProductClientView({ product }: { product: Product }) {
 
         <div className="relative flex-1 aspect-[3/4] lg:aspect-auto lg:h-[680px] bg-surface-subtle rounded-2xl overflow-hidden">
           <img alt={product.name} src={mainImage} className="absolute inset-0 w-full h-full object-cover object-center" />
+          {isAllSoldOut && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <span className="bg-white text-ink px-6 py-2 rounded-full text-[14px] font-semibold tracking-wide uppercase">Sold Out</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -217,16 +219,26 @@ export default function ProductClientView({ product }: { product: Product }) {
           </div>
         )}
 
+        {/* Buy Now Button */}
         <button
-          onClick={handleAddToCart}
-          disabled={isDisabled}
+          onClick={handleBuyNow}
+          disabled={isDisabled || isAllSoldOut}
           className={`w-full py-4 rounded-full text-[14px] font-medium transition-all ${
-            isDisabled
+            isDisabled || isAllSoldOut
               ? "bg-surface-muted text-ink-tertiary cursor-not-allowed"
               : "bg-ink text-surface-elevated hover:bg-accent active:scale-[0.98]"
           }`}
         >
-          {isDisabled ? "Select options" : "Add to Bag"}
+          {isAllSoldOut ? "Sold Out" : isDisabled ? "Select options" : "Buy Now"}
+        </button>
+
+        {/* Share Button */}
+        <button
+          onClick={handleShare}
+          className="w-full py-3 mt-3 rounded-full text-[13px] font-medium text-ink-secondary border border-edge hover:border-ink hover:text-ink transition-all flex items-center justify-center gap-2"
+        >
+          <span className="material-symbols-outlined text-[18px]">share</span>
+          Share
         </button>
 
         {product.description && (
@@ -241,14 +253,22 @@ export default function ProductClientView({ product }: { product: Product }) {
         )}
       </div>
 
-      {/* Toast Notification */}
+      {/* ── Success Toast ── */}
       {toast && (
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-ink text-surface-elevated text-[13px] px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 ${
-            toast.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          className={`fixed bottom-8 right-8 z-50 transition-all duration-300 ${
+            toast.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
           }`}
         >
-          {toast.message}
+          <div className="bg-white border border-green-200 rounded-2xl shadow-xl px-6 py-4 flex items-center gap-4 min-w-[300px]">
+            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+              <span className="material-symbols-outlined text-green-600 text-[22px]">check_circle</span>
+            </div>
+            <div>
+              <p className="text-[14px] font-medium text-gray-900">Taking you to checkout</p>
+              <p className="text-[13px] text-gray-500 mt-0.5">{toast.message}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

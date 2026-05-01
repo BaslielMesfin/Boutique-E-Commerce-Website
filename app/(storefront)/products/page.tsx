@@ -47,21 +47,32 @@ const demoProducts = [
   },
 ];
 
-const CATEGORIES = ["All", "Tops", "Bottoms", "Shoes", "Accessories", "Outerwear"];
+const CATEGORIES = ["All", "Tops", "Bottoms", "Shoes", "Accessories", "Outerwear", "New In"];
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ category?: string; search?: string }> }) {
   const resolvedParams = await searchParams;
   const filterCategory = resolvedParams.category?.toLowerCase();
   const searchQuery = resolvedParams.search?.toLowerCase();
 
-  let products: typeof demoProducts = [];
+  let products: (typeof demoProducts[0] & { variants?: any[]; createdAt?: Date })[] = [];
   try {
-    const db = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+    const db = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { variants: true },
+    });
     if (db.length > 0) products = db;
   } catch { /* ignore */ }
   if (products.length === 0) products = demoProducts;
 
-  if (filterCategory && filterCategory !== "all") {
+  // "New In" = products created within the last 7 days
+  if (filterCategory === "new-in") {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    products = products.filter((p) => {
+      if (p.createdAt) return new Date(p.createdAt) >= oneWeekAgo;
+      return false;
+    });
+  } else if (filterCategory && filterCategory !== "all") {
     products = products.filter((p) => p.category?.toLowerCase() === filterCategory);
   }
 
@@ -71,38 +82,44 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
 
   const title = searchQuery
     ? `Results for "${resolvedParams.search}"`
+    : filterCategory === "new-in"
+    ? "New In"
     : filterCategory && filterCategory !== "all"
     ? CATEGORIES.find(c => c.toLowerCase() === filterCategory) || "Shop All"
     : "Shop All";
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-16">
-      <div className="flex items-baseline justify-between mb-10">
-        <div>
-          <h1 className="text-[28px] font-medium text-ink mb-1">{title}</h1>
-          <p className="text-[13px] text-ink-tertiary">{products.length} pieces</p>
-        </div>
-        <div className="hidden md:flex items-center gap-2">
-          {CATEGORIES.map((cat) => {
-            const isActive = cat === "All"
-              ? !filterCategory || filterCategory === "all"
-              : filterCategory === cat.toLowerCase();
-            return (
-              <Link
-                key={cat}
-                href={cat === "All" ? "/products" : `/products?category=${cat.toLowerCase()}`}
-                className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors ${
-                  isActive
-                    ? "bg-ink text-surface-elevated"
-                    : "bg-surface-muted text-ink-secondary hover:text-ink"
-                }`}
-              >
-                {cat}
-              </Link>
-            );
-          })}
-        </div>
+      {/* Title */}
+      <div className="mb-4">
+        <h1 className="text-[28px] font-medium text-ink mb-1">{title}</h1>
+        <p className="text-[13px] text-ink-tertiary">{products.length} pieces</p>
       </div>
+
+      {/* Filter chips — always left-aligned with gap above */}
+      <div className="flex items-center gap-2 flex-wrap mb-10 pt-4 border-t border-edge">
+        {CATEGORIES.map((cat) => {
+          const catSlug = cat === "All" ? "all" : cat.toLowerCase().replace(" ", "-");
+          const isActive = cat === "All"
+            ? !filterCategory || filterCategory === "all"
+            : filterCategory === catSlug;
+          return (
+            <Link
+              key={cat}
+              href={cat === "All" ? "/products" : `/products?category=${catSlug}`}
+              className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors ${
+                isActive
+                  ? "bg-ink text-surface-elevated"
+                  : "bg-surface-muted text-ink-secondary hover:text-ink"
+              }`}
+            >
+              {cat}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Product grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
         {products.map((p) => (
           <ProductCard key={p.id} product={p} />
@@ -117,4 +134,3 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     </div>
   );
 }
-

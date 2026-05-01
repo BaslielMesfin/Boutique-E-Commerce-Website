@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 type CartItem = {
   variantId: string;
@@ -20,7 +19,6 @@ const SUB_CITIES = [
 ];
 
 export default function CheckoutPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [formData, setFormData] = useState({
@@ -32,22 +30,20 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    const cart = localStorage.getItem("habesha_cart");
-    if (cart) {
+    // Read from Buy Now item
+    const buyNow = localStorage.getItem("habesha_buynow");
+    if (buyNow) {
       try {
-        const parsed = JSON.parse(cart);
+        const parsed = JSON.parse(buyNow);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setCartItems(parsed);
-        } else {
-          router.push("/products"); // empty cart
+          return;
         }
-      } catch {
-        router.push("/products");
-      }
-    } else {
-      router.push("/products");
+      } catch { /* ignore */ }
     }
-  }, [router]);
+    // No item to buy — redirect back
+    window.location.href = "/products";
+  }, []);
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -73,8 +69,7 @@ export default function CheckoutPage() {
       });
       const data = await res.json();
       if (data.checkoutUrl) {
-        localStorage.removeItem("habesha_cart");
-        window.dispatchEvent(new Event("cart_updated"));
+        localStorage.removeItem("habesha_buynow");
         window.location.href = data.checkoutUrl;
       } else {
         alert(data.error || "Payment failed. Please try again.");

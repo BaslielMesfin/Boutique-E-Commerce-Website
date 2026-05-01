@@ -1,34 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [hasCartItems, setHasCartItems] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkCart = () => {
-      const cart = localStorage.getItem("habesha_cart");
-      if (cart) {
-        try {
-          const parsed = JSON.parse(cart);
-          setHasCartItems(Array.isArray(parsed) && parsed.length > 0);
-        } catch {
-          setHasCartItems(false);
-        }
-      } else {
-        setHasCartItems(false);
-      }
-    };
-    checkCart();
-    // Listen for custom event from ProductClientView
-    window.addEventListener("cart_updated", checkCart);
-    return () => window.removeEventListener("cart_updated", checkCart);
-  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +37,7 @@ export default function Navbar() {
           <Link href="/products?category=shoes" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">
             Shoes
           </Link>
-          <Link href="/products?category=new" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">
+          <Link href="/products?category=new-in" className="text-[13px] text-ink-secondary hover:text-ink transition-colors">
             New In
           </Link>
         </nav>
@@ -89,18 +68,10 @@ export default function Navbar() {
           >
             <span className="material-symbols-outlined text-[20px]">search</span>
           </button>
-          <Link href="/admin" aria-label="Account" className="hidden md:block text-ink-secondary hover:text-ink transition-colors">
-            <span className="material-symbols-outlined text-[20px]">person_outline</span>
-          </Link>
-          <Link href="/checkout" aria-label="Bag" className="relative text-ink-secondary hover:text-ink transition-colors">
-            <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
-            {hasCartItems && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent rounded-full animate-in zoom-in" />
-            )}
-          </Link>
         </div>
 
       </div>
     </header>
   );
 }
+
