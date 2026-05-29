@@ -1,4 +1,4 @@
-# ESSENTIAL — Boutique E-Commerce Platform
+# Boutique E-Commerce Platform
 
 A minimalist, full-stack e-commerce web application built for a fashion boutique in Addis Ababa. Customers browse curated inventory, select product variants (size/color), and pay via **Chapa** — Ethiopia's local payment gateway. Successful payments automatically notify the boutique owner on **WhatsApp** with full order details.
 
